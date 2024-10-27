@@ -39,7 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=150, unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    dob = models.DateField()
+    date_of_birth = models.DateField()
     phone_number = models.CharField(max_length=13)
     home_address = models.CharField(max_length=150)
     province = models.CharField(max_length=150)
@@ -55,7 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=12, blank=True, choices=Role.choices)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'dob', 'phone_number',
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'date_of_birth', 'phone_number',
                        'home_address', 'province', 'city', 'barangay', 'zip_code']
 
     objects = UserManager()

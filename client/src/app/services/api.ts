@@ -11,7 +11,7 @@ import { RootState } from "../store";
 // create a new mutex
 const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
-  baseUrl: `localhost:8000`,
+  baseUrl: `${import.meta.env.VITE_BASE_URL}`,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const csrf = (getState() as RootState).auth.csrftoken;

@@ -29,7 +29,7 @@ class CustomerSerializer(serializers.ModelSerializer):
             email=self.validated_data["email"],
             first_name=self.validated_data["first_name"],
             last_name=self.validated_data["last_name"],
-            dob=self.validated_data["dob"],
+            date_of_birth=self.validated_data["date_of_birth"],
             phone_number=phone_no,
             home_address=self.validated_data["home_address"],
             province=self.validated_data["province"],

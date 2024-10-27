@@ -52,6 +52,38 @@ class ObtainTokenSerializer(TokenObtainPairSerializer):
         return data
 
 
+class AdminLoginView(TokenObtainPairView):
+    serializer_class = ObtainTokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        email = request.data['email']
+
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        user = Customer.objects.get(email=email)
+
+        if user.role == 'ADMIN' or user.role == 'RECEPTIONIST':
+            response = Response(data, status=status.HTTP_200_OK)
+
+            response.set_cookie(
+                key=settings.SIMPLE_JWT['AUTH_COOKIE'],
+                value=data['refresh'],
+                httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+                secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                path=settings.SIMPLE_JWT['AUTH_COOKIE_PATH'],
+                samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],
+                max_age=settings.SIMPLE_JWT['AUTH_COOKIE_MAX_AGE']
+            )
+        else:
+            response = Response({
+                "detail": "No active account found with the given credentials"
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+        return response
+
+
 class CustomerView(APIView):
     def get(self, request, format=None):
         snippets = Customer.customer.all()
