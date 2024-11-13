@@ -20,7 +20,7 @@ const baseQuery = fetchBaseQuery({
       headers.set("x-csrftoken", csrf);
     }
     if (access) {
-      headers.set("authorization", `JWT ${access}`);
+      headers.set("authorization", `Bearer ${access}`);
     }
   },
 });
@@ -38,7 +38,7 @@ const baseQueryWithReauth: BaseQueryFn<
       const release = await mutex.acquire();
       try {
         const refreshResult = await baseQuery(
-          { url: "/auth/token/refresh/", method: "POST" },
+          "/auth/token/refresh/",
           api,
           extraOptions
         );

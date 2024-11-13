@@ -3,16 +3,20 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .models import Customer
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.views.decorators.clickjacking import xframe_options_deny
+from django.views.decorators.cache import never_cache
+
+from .models import Customer, User
 from .serializers import CustomerSerializer
 
 
@@ -35,6 +39,9 @@ class ObtainCsrfToken(APIView):
         return response
 
 
+@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(xframe_options_deny, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class RefreshTokenView(TokenRefreshView):
     def get(self, request, *args, **kwargs):
         refresh = request.COOKIES.get('refreshtoken')
@@ -52,6 +59,9 @@ class ObtainTokenSerializer(TokenObtainPairSerializer):
         return data
 
 
+@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(xframe_options_deny, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class AdminLoginView(TokenObtainPairView):
     serializer_class = ObtainTokenSerializer
 
@@ -84,13 +94,37 @@ class AdminLoginView(TokenObtainPairView):
         return response
 
 
+@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(xframe_options_deny, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class CustomerView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
-        snippets = Customer.customer.all()
-        serializer = CustomerSerializer(snippets, many=True)
+        email = request.user.email
+
+        customer = Customer.customer.get(email=email)
+        serializer = CustomerSerializer(customer)
         return Response(serializer.data)
 
 
+@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(xframe_options_deny, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
+class AdminView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        email = request.user.email
+
+        user = User.objects.get(email=email)
+        serializer = CustomerSerializer(user)
+        return Response(serializer.data)
+
+
+@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(xframe_options_deny, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class CustomerRegistrationView(APIView):
     def post(self, request, format=None):
         serializer = CustomerSerializer(data=request.data)
@@ -100,6 +134,9 @@ class CustomerRegistrationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(xframe_options_deny, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class CustomerLoginView(TokenObtainPairView):
     serializer_class = ObtainTokenSerializer
 
@@ -132,6 +169,9 @@ class CustomerLoginView(TokenObtainPairView):
         return response
 
 
+@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(xframe_options_deny, name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class LogoutView(APIView):
     def post(self, request, *args, **kwargs):
         refresh = request.COOKIES.get('refreshtoken')

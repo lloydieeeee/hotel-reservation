@@ -1,10 +1,10 @@
 import SideBar from "@/components/common/SideBar";
-import { Outlet } from "react-router-dom";
+import PrivateOutlet from "@/utils/PrivateOutlet";
 
 function AdminMainPage() {
   return (
     <SideBar>
-      <Outlet />
+      <PrivateOutlet />
     </SideBar>
   );
 }

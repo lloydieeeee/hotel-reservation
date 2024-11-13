@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface AuthState {
-  csrftoken: string;
-  accesstoken: string;
-}
+type AuthState = {
+  csrftoken: string | null;
+  accesstoken: string | null;
+};
 
 const initialState = {
-  csrftoken: "",
-  accesstoken: "",
+  csrftoken: null,
+  accesstoken: null,
 } as AuthState;
 
 const authSlice = createSlice({
