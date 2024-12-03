@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Spinner from "@/components/common/Spinner";
+import Spinner from "@/components/shared/Spinner";
 import { toast } from "sonner";
 
 import { z } from "zod";
@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setAuth } from "@/features/auth/authSlice";
-import { useSigninAdminMutation } from "@/app/services/auth";
+import { useSignInAdminMutation } from "@/app/services/auth";
 
 const schema = z.object({
   email: z
@@ -43,7 +43,7 @@ function AdminSignInForm() {
     },
   });
 
-  const [signin, { isLoading }] = useSigninAdminMutation();
+  const [signin, { isLoading }] = useSignInAdminMutation();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

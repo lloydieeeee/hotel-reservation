@@ -27,7 +27,7 @@ const initialState = {
   zip_code: null,
 } as AuthState;
 
-const authSlice = createSlice({
+const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
@@ -62,5 +62,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setInformation } = authSlice.actions;
-export default authSlice.reducer;
+export const { setInformation } = userSlice.actions;
+export default userSlice.reducer;

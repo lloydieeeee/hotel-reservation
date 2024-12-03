@@ -2,9 +2,12 @@ import { RootState } from "@/app/store";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 
-export const useAuth = () => {
-  const selectAccessToken = (state: RootState) => state.auth.accesstoken;
-  const accesstoken = useSelector(selectAccessToken);
+const useAuth = () => {
+  const { accesstoken, csrftoken } = useSelector(
+    (state: RootState) => state.auth
+  );
 
-  return useMemo(() => ({ accesstoken }), [accesstoken]);
+  return useMemo(() => ({ accesstoken, csrftoken }), [accesstoken, csrftoken]);
 };
+
+export default useAuth;

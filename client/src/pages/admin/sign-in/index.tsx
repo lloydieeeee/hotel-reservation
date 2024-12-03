@@ -1,5 +1,5 @@
 import AdminSignInForm from "./AdminSignInForm";
-import { useCsrf } from "@/hooks/useCsrf";
+import useCsrf from "@/hooks/useCsrf";
 
 function AdminSignInPage() {
   useCsrf();

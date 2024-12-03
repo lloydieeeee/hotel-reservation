@@ -33,7 +33,7 @@ class ObtainCsrfToken(APIView):
             }, status=status.HTTP_200_OK)
         except:
             response = Response({
-                'csrftoken': 'Csrf cookie not set or found'
+                'csrftoken': 'CSRF Cookie not set or found'
             }, status=status.HTTP_400_BAD_REQUEST)
 
         return response
@@ -45,6 +45,13 @@ class ObtainCsrfToken(APIView):
 class RefreshTokenView(TokenRefreshView):
     def get(self, request, *args, **kwargs):
         refresh = request.COOKIES.get('refreshtoken')
+
+        if not refresh:
+            return Response({
+                "status": "error",
+                "message": "Refresh cookie not set or found.",
+                "data": None
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = TokenRefreshSerializer(data={'refresh': refresh})
         serializer.is_valid(raise_exception=True)
@@ -73,9 +80,15 @@ class AdminLoginView(TokenObtainPairView):
         data = serializer.validated_data
 
         user = Customer.objects.get(email=email)
+        user_serializer = CustomerSerializer(user)
 
         if user.role == 'ADMIN' or user.role == 'RECEPTIONIST':
-            response = Response(data, status=status.HTTP_200_OK)
+            response = Response({
+                "status": "success",
+                "message": "Login successful.",
+                "data": user_serializer.data,
+                "token": data
+            }, status=status.HTTP_200_OK)
 
             response.set_cookie(
                 key=settings.SIMPLE_JWT['AUTH_COOKIE'],
@@ -88,7 +101,9 @@ class AdminLoginView(TokenObtainPairView):
             )
         else:
             response = Response({
-                "detail": "No active account found with the given credentials"
+                "status": "unauthorized",
+                "message": "No active account found with the given credentials",
+                "data": None,
             }, status=status.HTTP_401_UNAUTHORIZED)
 
         return response
@@ -105,7 +120,11 @@ class CustomerView(APIView):
 
         customer = Customer.customer.get(email=email)
         serializer = CustomerSerializer(customer)
-        return Response(serializer.data)
+        return Response({
+            "status": "success",
+            "message": None,
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
 
 
 @method_decorator(csrf_protect, name='dispatch')
@@ -119,7 +138,11 @@ class AdminView(APIView):
 
         user = User.objects.get(email=email)
         serializer = CustomerSerializer(user)
-        return Response(serializer.data)
+        return Response({
+            "status": "success",
+            "message": None,
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
 
 
 @method_decorator(csrf_protect, name='dispatch')
@@ -130,7 +153,11 @@ class CustomerRegistrationView(APIView):
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({
+                "status": "success",
+                "message": "Registration successful.",
+                "data": serializer.data
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

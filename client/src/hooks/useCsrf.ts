@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useFetchCsrfTokenQuery } from "@/app/services/auth";
+import { useGetCsrfTokenQuery } from "@/app/services/auth";
 import { setCsrf } from "@/features/auth/authSlice";
 
-export const useCsrf = () => {
+const useCsrf = () => {
+  const { data, isSuccess } = useGetCsrfTokenQuery();
   const dispatch = useDispatch();
-  const { data, isSuccess } = useFetchCsrfTokenQuery();
 
   useEffect(() => {
     if (isSuccess) {
@@ -13,3 +13,5 @@ export const useCsrf = () => {
     }
   }, [dispatch, data]);
 };
+
+export default useCsrf;

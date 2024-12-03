@@ -16,6 +16,7 @@ const baseQuery = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const csrf = (getState() as RootState).auth.csrftoken;
     const access = (getState() as RootState).auth.accesstoken;
+
     if (csrf) {
       headers.set("x-csrftoken", csrf);
     }

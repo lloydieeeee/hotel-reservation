@@ -4,14 +4,23 @@ interface CsrfResponse {
   csrftoken: string;
 }
 
+interface RefreshResponse {
+  accesstoken: string;
+}
+
 const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    fetchCsrfToken: builder.query<CsrfResponse, void>({
+    getCsrfToken: builder.query<CsrfResponse, void>({
       query: () => ({
         url: "/auth/token/csrf/",
       }),
     }),
-    signinAdmin: builder.mutation({
+    refreshToken: builder.query<RefreshResponse, void>({
+      query: () => ({
+        url: "auth/token/refresh/"
+      })
+    }),
+    signInAdmin: builder.mutation({
       query: ({ email, password }) => ({
         url: "/auth/admin/sign-in/",
         method: "POST",
@@ -21,7 +30,7 @@ const authApi = api.injectEndpoints({
         body: { email, password },
       }),
     }),
-    signinUser: builder.mutation({
+    signInUser: builder.mutation({
       query: ({ email, password }) => ({
         url: "/auth/customer/sign-in/",
         method: "POST",
@@ -41,8 +50,9 @@ const authApi = api.injectEndpoints({
 });
 
 export const {
-  useFetchCsrfTokenQuery,
-  useSigninAdminMutation,
-  useSigninUserMutation,
+  useGetCsrfTokenQuery,
+  useRefreshTokenQuery,
+  useSignInAdminMutation,
+  useSignInUserMutation,
   useLogoutMutation,
 } = authApi;
